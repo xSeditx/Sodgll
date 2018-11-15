@@ -1,0 +1,67 @@
+//  void Sphere::Update()
+//  {
+//  }
+//  	  ViewMatrix = glm::translate(Matrix(1), Position);
+  	  ViewMatrix = glm::rotate(ViewMatrix, (float)RADIANS(Rotation.y), Up);
+	  ViewMatrix = glm::rotate(ViewMatrix, (float)RADIANS(Rotation.x), Right);
+	  ViewMatrix = glm::inverse(ViewMatrix);
+
+
+
+  	// ClampCamera();
+  	Vec3 newFront;
+  	newFront.x = cos(glm::radians(Rotation.y)) * cos(glm::radians(Rotation.x));
+  	newFront.y = sin(glm::radians(Rotation.x));
+  	newFront.z = sin(glm::radians(Rotation.y)) * cos(glm::radians(Rotation.x));
+    	Forward = glm::normalize(newFront);
+  
+  	///Also re-calculate the Right and Up vector
+  	Right = glm::normalize(glm::cross(Forward, Up));
+  	Up = glm::normalize(glm::cross(Right, Forward));
+  void Sphere::Render()
+  {
+  
+  	glPushMatrix();
+  	glTranslatef(Position.x, Position.y, Position.z);
+  	glRotatef(Rotation.x, 1, 0, 0);
+  	glRotatef(Rotation.z, 0, 0, 1);
+  	glRotatef(Rotation.y, 0, 1, 0);
+  	Polygons->Bind();
+  	//glDrawArrays(GL_TRIANGLE_STRIP, 0, VertexCount);
+  	glDrawElements(GL_TRIANGLE_STRIP, Polygons->Indices->ElementCount , GL_UNSIGNED_INT, nullptr);
+  	Polygons->Unbind();
+  	glPopMatrix();
+  }
+
+
+
+  	if (BatchID != 0)
+	{
+	Indices->Unbind();
+
+ 	}
+	else
+	{
+
+
+
+
+  	if (BatchID != 0)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, BatchID);
+		if (Indices)    Indices->Bind();
+		GLuint Location = glGetAttribLocation(Shader::GetActiveShader()->Name(), "VertexPosition");
+		glEnableVertexAttribArray(Location);
+ 		_GL(glVertexAttribPointer(Location, 3, GL_FLOAT, GL_FALSE, 0, 0));
+
+		Location = glGetAttribLocation(Shader::GetActiveShader()->Name(), "VertexNormal");
+		glEnableVertexAttribArray(Location);
+ 		_GL(glVertexAttribPointer(Location, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(NormalsOffset)));
+
+		Location = glGetAttribLocation(Shader::GetActiveShader()->Name(), "VertexColor");
+		glEnableVertexAttribArray(Location);
+		_GL(glVertexAttribPointer(Location, 4, GL_FLOAT, GL_FALSE,0, BUFFER_OFFSET(ColorsOffset)));
+
+	}
+	else
+	{ 
